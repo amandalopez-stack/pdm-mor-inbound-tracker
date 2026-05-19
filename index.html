@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PDM MOR Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#F5F4F2;color:#1a1a1a;font-size:13px}
+.app{max-width:1480px;margin:0 auto;padding:16px}
+.header{margin-bottom:16px}
+.header-title{font-size:20px;font-weight:bold;color:#2C2B2B}
+.header-sub{font-size:11px;color:#888;margin-top:3px}
+.nav-row{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.nbtn{padding:5px 12px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;font-family:Arial;color:#444}
+.nbtn:hover{border-color:#7265E3;color:#7265E3}
+.nbtn.active{background:#7265E3;color:#fff;border-color:#7265E3}
+.vbtn{padding:5px 12px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;font-family:Arial;color:#444}
+.vbtn:hover{border-color:#2C2B2B}
+.vbtn.active{background:#2C2B2B;color:#fff;border-color:#2C2B2B}
+.sep{width:1px;height:24px;background:#ddd;margin:0 3px}
+.edit-btn{padding:5px 14px;border:1px solid #7265E3;border-radius:4px;background:#EDE9FA;color:#7265E3;cursor:pointer;font-size:11px;font-family:Arial;margin-left:auto}
+.edit-btn:hover{background:#7265E3;color:#fff}
+.view-note{font-size:10px;color:#555;margin-bottom:10px;padding:6px 10px;background:#fff;border-left:3px solid #7265E3;border-radius:0 4px 4px 0}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:8px;margin-bottom:14px}
+.hcard{background:#2C2B2B;border-radius:6px;padding:10px 14px}
+.hcard-lbl{font-size:9px;color:#A99DF0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.hcard-val{font-size:18px;font-weight:bold;color:#fff;line-height:1.1}
+.hcard-sub{font-size:10px;margin-top:3px}
+.pos{color:#16A34A}.neg{color:#DC2626}.neu{color:#D97706}.muted{color:#888}
+.tables-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:860px){.tables-row{grid-template-columns:1fr}}
+.tblock{background:#fff;border:1px solid #e0ddf5;border-radius:6px;overflow:hidden}
+.tblock-hdr{background:#2C2B2B;color:#A99DF0;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;padding:7px 12px}
+table{border-collapse:collapse;width:100%}
+th{background:#7265E3;color:#fff;padding:6px 10px;text-align:right;font-size:10px;font-weight:bold;white-space:nowrap}
+th:first-child{text-align:left;min-width:155px}
+td{padding:5px 10px;text-align:right;border-bottom:1px solid #ece9f5;font-size:12px;white-space:nowrap}
+td:first-child{text-align:left;font-weight:500;color:#444;font-size:11px}
+tr:nth-child(even) td{background:#F7F5FD}
+tr:hover td{background:#EDE9FA}
+.sec-row td{background:#2C2B2B!important;color:#A99DF0;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:bold;padding:4px 10px}
+.sec-row td:first-child{color:#A99DF0}
+.hl-row td{background:#EDE9FA!important;font-weight:600}
+.pipe-block{background:#fff;border:1px solid #e0ddf5;border-radius:6px;padding:14px;margin-bottom:14px}
+.pipe-block h3{font-size:11px;color:#7265E3;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.pipe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px}
+.pcard{background:#2C2B2B;border-radius:5px;padding:8px 12px}
+.pcard-lbl{font-size:9px;color:#A99DF0;margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px}
+.pcard-val{font-size:16px;font-weight:bold;color:#fff}
+.pcard-rate{font-size:10px;color:#A99DF0;opacity:.65;margin-top:1px}
+.fcst-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:8px}
+.fcard{background:#EDE9FA;border-radius:5px;padding:8px 12px;border:1px solid #d5cff5}
+.fcard-lbl{font-size:9px;color:#7265E3;margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px}
+.fcard-val{font-size:15px;font-weight:bold;color:#2C2B2B}
+.pipe-note{margin-top:10px;font-size:10px;color:#888}
+.src-tag{display:inline-block;font-size:9px;background:#EDE9FA;color:#7265E3;border-radius:3px;padding:1px 5px;margin-left:6px;font-weight:normal;vertical-align:middle}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:flex-start;justify-content:center;padding-top:30px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:8px;padding:20px;width:700px;max-width:96vw;margin-bottom:40px}
+.modal h2{font-size:15px;font-weight:bold;color:#2C2B2B;margin-bottom:12px}
+.mtabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.mtab{padding:4px 10px;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:11px;background:#fff;font-family:Arial}
+.mtab.active{background:#7265E3;color:#fff;border-color:#7265E3}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.msec{font-size:10px;color:#7265E3;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;grid-column:1/-1;margin-top:8px;padding-top:8px;border-top:1px solid #ece9f5}
+label{font-size:11px;color:#555;display:block;margin-bottom:3px}
+input[type=number]{width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:Arial}
+input[type=number]:focus{outline:none;border-color:#7265E3}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.btn-save{background:#7265E3;color:#fff;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:12px;font-family:Arial}
+.btn-cancel{background:#eee;color:#333;border:none;padding:8px 18px;border-radius:4px;cursor:pointer;font-size:12px;font-family:Arial}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-title">PDM Inbound Marketing &mdash; MOR Tracker</div>
+    <div class="header-sub">Retainer Only &nbsp;&middot;&nbsp; Inbound Only &nbsp;&middot;&nbsp; Source: Dreamdata export 5/1/26 &nbsp;&middot;&nbsp; All metrics auto-calculated</div>
+  </div>
+  <div class="nav-row">
+    <span style="font-size:10px;color:#888;margin-right:2px">PERIOD:</span>
+    <button class="nbtn active" onclick="setPeriod(this,'jan26')">Jan '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'feb26')">Feb '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'mar26')">Mar '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'apr26')">Apr '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'q126')">Q1 '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'ytd26')">YTD '26 (Jan–Apr)</button>
+    <div class="sep"></div>
+    <span style="font-size:10px;color:#888;margin-right:2px">VIEW:</span>
+    <button class="vbtn active" onclick="setView(this,'action')">Action Date</button>
+    <button class="vbtn" onclick="setView(this,'created')">Created Date</button>
+    <button class="edit-btn" onclick="openEdit()">&#9998; Edit Data</button>
+  </div>
+  <div id="main"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>Edit Monthly Funnel Data</h2>
+    <div class="mtabs" id="mtabs"></div>
+    <div id="mform"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SPEND ─────────────────────────────────────────────────────────────────────
+const SPEND = {
+  jan24:45645,feb24:57036,mar24:50275,apr24:52385,may24:56446,jun24:47808,
+  jul24:80198,aug24:73696,sep24:66696,oct24:64646,nov24:69578,dec24:76696,
+  jan25:131260,feb25:133473,mar25:141004,apr25:96071.89,
+  may25:102043.25,jun25:130855.06,jul25:146787.27,aug25:142794.49,
+  sep25:129629.72,oct25:106168.64,nov25:74710.94,dec25:82261,
+  jan26:173498.97,feb26:204085.32,mar26:213194.38,apr26:116083.19
+};
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+// action view  : sqls = created date, sals = SAL start date, cwd/mgp = close date
+// created view : sqls = created date, sals/cwd/mgp = cohort (same record downstream)
+// leads & mqls always from action date (separate Leads/MQL reports)
+// Pipeline buckets (open pipe MGP $): commit, bestcase, beyond_mgp, bizdiscovery_mgp
+//   commit      = Legal stage
+//   bestcase    = Manager Forecast = "Best Case"
+//   beyond_mgp  = Proposal / Presentation stage
+//   bizdiscovery_mgp = Business Discovery / Technical Discovery / Data Access
+// Source: Dreamdata export 5/1/26 — Retainer + Inbound only, FP excluded
+
+let D = {
+  // ── 2024 (leads/mqls from CSV; SQLs+ partially available, using what we have) ──
+  jan24:{
+    action:{leads:221,mqls:103,sqls:56,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:221,mqls:103,sqls:56,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  feb24:{
+    action:{leads:194,mqls:75,sqls:54,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:194,mqls:75,sqls:54,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  mar24:{
+    action:{leads:202,mqls:89,sqls:71,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:202,mqls:89,sqls:71,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  apr24:{
+    action:{leads:190,mqls:80,sqls:54,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:190,mqls:80,sqls:54,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  may24:{
+    action:{leads:202,mqls:93,sqls:80,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:202,mqls:93,sqls:80,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  jun24:{
+    action:{leads:175,mqls:79,sqls:55,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:175,mqls:79,sqls:55,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  jul24:{
+    action:{leads:210,mqls:91,sqls:63,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:210,mqls:91,sqls:63,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  aug24:{
+    action:{leads:159,mqls:69,sqls:81,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:159,mqls:69,sqls:81,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  sep24:{
+    action:{leads:189,mqls:92,sqls:72,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:189,mqls:92,sqls:72,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  oct24:{
+    action:{leads:200,mqls:108,sqls:86,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:200,mqls:108,sqls:86,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  nov24:{
+    action:{leads:135,mqls:68,sqls:65,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:135,mqls:68,sqls:65,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  dec24:{
+    action:{leads:146,mqls:69,sqls:56,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:146,mqls:69,sqls:56,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  // ── 2025 ──────────────────────────────────────────────────────────────────
+  jan25:{
+    action:{leads:192,mqls:97,sqls:54,sals:30,cwd:5,mgp:72065,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:86204},
+    created:{leads:192,mqls:97,sqls:54,sals:28,cwd:11,mgp:246709,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:86204}
+  },
+  feb25:{
+    action:{leads:169,mqls:97,sqls:48,sals:19,cwd:7,mgp:81686,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:99770},
+    created:{leads:169,mqls:97,sqls:48,sals:23,cwd:9,mgp:117582,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:99770}
+  },
+  mar25:{
+    action:{leads:183,mqls:86,sqls:37,sals:22,cwd:6,mgp:73299,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:43,goal_sals:21,goal_cwd:6,goal_mgp:87705},
+    created:{leads:183,mqls:86,sqls:37,sals:18,cwd:3,mgp:67321,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:43,goal_sals:21,goal_cwd:6,goal_mgp:87705}
+  },
+  apr25:{
+    action:{leads:148,mqls:77,sqls:29,sals:14,cwd:7,mgp:79294,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:148,mqls:77,sqls:29,sals:13,cwd:5,mgp:31430,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  may25:{
+    action:{leads:142,mqls:67,sqls:74,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:142,mqls:67,sqls:74,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  jun25:{
+    action:{leads:169,mqls:83,sqls:76,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:169,mqls:83,sqls:76,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  jul25:{
+    action:{leads:196,mqls:104,sqls:97,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:196,mqls:104,sqls:97,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  aug25:{
+    action:{leads:172,mqls:104,sqls:89,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:172,mqls:104,sqls:89,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  sep25:{
+    action:{leads:186,mqls:89,sqls:87,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:186,mqls:89,sqls:87,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  oct25:{
+    action:{leads:182,mqls:100,sqls:84,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:182,mqls:100,sqls:84,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  nov25:{
+    action:{leads:124,mqls:74,sqls:63,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:124,mqls:74,sqls:63,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  dec25:{
+    action:{leads:108,mqls:57,sqls:64,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:108,mqls:57,sqls:64,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  },
+  // ── 2026 — fully populated from Dreamdata 5/1/26 export ───────────────────
+  // Pipeline stage mapping: commit=Legal, bestcase=Mgr Forecast "Best Case",
+  // beyond=Proposal/Presentation, bizdiscovery=BizDisc/TechDisc/DataAccess
+  jan26:{
+    action:{leads:146,mqls:86,sqls:37,sals:18,cwd:5,mgp:63877,
+            commit_mgp:0,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:0,
+            goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:86204},
+    created:{leads:146,mqls:86,sqls:37,sals:17,cwd:4,mgp:100818,
+             commit_mgp:0,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:0,
+             goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:86204}
+  },
+  feb26:{
+    action:{leads:152,mqls:91,sqls:47,sals:17,cwd:5,mgp:63343,
+            commit_mgp:10000,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:15000,
+            goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:99770},
+    created:{leads:152,mqls:91,sqls:47,sals:22,cwd:4,mgp:41805,
+             commit_mgp:10000,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:15000,
+             goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:99770}
+  },
+  mar26:{
+    action:{leads:168,mqls:86,sqls:45,sals:26,cwd:6,mgp:59168,
+            commit_mgp:36000,bestcase_mgp:39207,beyond_mgp:69150,bizdiscovery_mgp:37000,
+            goal_sqls:43,goal_sals:21,goal_cwd:6,goal_mgp:87705},
+    created:{leads:168,mqls:86,sqls:45,sals:23,cwd:2,mgp:52299,
+             commit_mgp:36000,bestcase_mgp:39207,beyond_mgp:69150,bizdiscovery_mgp:37000,
+             goal_sqls:43,goal_sals:21,goal_cwd:6,goal_mgp:87705}
+  },
+  apr26:{
+    action:{leads:130,mqls:70,sqls:36,sals:19,cwd:3,mgp:98208,
+            commit_mgp:11000,bestcase_mgp:15000,beyond_mgp:42000,bizdiscovery_mgp:185000,
+            goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:130,mqls:70,sqls:36,sals:14,cwd:1,mgp:7624,
+             commit_mgp:11000,bestcase_mgp:15000,beyond_mgp:42000,bizdiscovery_mgp:185000,
+             goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+  }
+};
+
+const PERIODS = {
+  jan26:{keys:['jan26'],yoy:['jan25'],label:'January 2026',plabel:'January 2025'},
+  feb26:{keys:['feb26'],yoy:['feb25'],label:'February 2026',plabel:'February 2025'},
+  mar26:{keys:['mar26'],yoy:['mar25'],label:'March 2026',plabel:'March 2025'},
+  apr26:{keys:['apr26'],yoy:['apr25'],label:'April 2026',plabel:'April 2025'},
+  q126:{keys:['jan26','feb26','mar26'],yoy:['jan25','feb25','mar25'],label:'Q1 2026',plabel:'Q1 2025'},
+  ytd26:{keys:['jan26','feb26','mar26','apr26'],yoy:['jan25','feb25','mar25','apr25'],label:'YTD 2026 (Jan–Apr)',plabel:'YTD 2025 (Jan–Apr)'}
+};
+
+let curPeriod = 'jan26', curView = 'action', editMo = 'jan26';
+
+function agg(keys, view) {
+  let o = {leads:0,mqls:0,sqls:0,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0,spend:0};
+  keys.forEach(k => {
+    let m = D[k][view];
+    for (let f in o) { if (f !== 'spend') o[f] += (m[f] || 0); }
+    o.spend += (SPEND[k] || 0);
+  });
+  return o;
+}
+
+function calc(m) {
+  let c = {};
+  c.lead_mql = m.leads > 0  ? m.mqls / m.leads  : null;
+  c.mql_sql  = m.mqls  > 0  ? m.sqls / m.mqls   : null;
+  c.sql_sal  = m.sqls  > 0  ? m.sals / m.sqls   : null;
+  c.sal_cwd  = m.sals  > 0  ? m.cwd  / m.sals   : null;
+  c.lead_cwd = m.leads > 0  ? m.cwd  / m.leads  : null;
+  c.mql_cwd  = m.mqls  > 0  ? m.cwd  / m.mqls   : null;
+  c.sql_cwd  = m.sqls  > 0  ? m.cwd  / m.sqls   : null;
+  c.cpl    = m.leads > 0 ? m.spend / m.leads : null;
+  c.cpmql  = m.mqls  > 0 ? m.spend / m.mqls  : null;
+  c.cpsql  = m.sqls  > 0 ? m.spend / m.sqls  : null;
+  c.cpsal  = m.sals  > 0 ? m.spend / m.sals  : null;
+  c.cac    = m.cwd   > 0 ? m.spend / m.cwd   : null;
+  c.aov    = m.cwd   > 0 ? m.mgp   / m.cwd   : null;
+  c.tcv    = m.mgp * 8;
+  c.ltv    = m.mgp * 12;
+  c.tcv_lift = m.spend > 0 ? c.tcv / m.spend : null;
+  c.ltv_lift = m.spend > 0 ? c.ltv / m.spend : null;
+  c.forecast_mgp = (m.commit_mgp * 0.60) + (m.bestcase_mgp * 0.34) + (m.beyond_mgp * 0.2536) + (m.bizdiscovery_mgp * 0.1173);
+  c.total_fcst_mgp = m.mgp + c.forecast_mgp;
+  c.remaining_pipe = m.commit_mgp + m.bestcase_mgp + m.beyond_mgp + m.bizdiscovery_mgp;
+  let avg_deal = m.cwd > 0 ? m.mgp / m.cwd : 12000;
+  c.fcst_cwd = avg_deal > 0 ? c.forecast_mgp / avg_deal : 0;
+  c.total_fcst_cwd = m.cwd + c.fcst_cwd;
+  c.tcv_fcst = c.total_fcst_mgp * 8;
+  c.ltv_fcst = c.total_fcst_mgp * 12;
+  c.cac_fcst = c.total_fcst_cwd > 0 ? m.spend / c.total_fcst_cwd : null;
+  c.tcv_lift_f = m.spend > 0 ? c.tcv_fcst / m.spend : null;
+  c.ltv_lift_f = m.spend > 0 ? c.ltv_fcst / m.spend : null;
+  return c;
+}
+
+function f$(v)  { return (v == null || isNaN(v)) ? '&mdash;' : '$' + Math.round(v).toLocaleString(); }
+function fp(v)  { return (v == null || isNaN(v)) ? '&mdash;' : (v * 100).toFixed(1) + '%'; }
+function fx(v)  { return (v == null || isNaN(v) || v === 0) ? '&mdash;' : v.toFixed(1) + 'x'; }
+function fn(v)  { return (v == null || isNaN(v)) ? '&mdash;' : Math.round(v).toLocaleString(); }
+
+function yoy(c, p) {
+  if (p == null || p === 0) return { t: '&mdash;', cl: 'muted' };
+  let pct = ((c - p) / p) * 100;
+  return { t: (pct > 0 ? '+' : '') + pct.toFixed(0) + '%', cl: pct > 0 ? 'pos' : pct < 0 ? 'neg' : 'muted' };
+}
+function pog(a, g) {
+  if (!g || g === 0) return { t: '&mdash;', cl: 'muted' };
+  let p = (a / g) * 100;
+  return { t: p.toFixed(0) + '%', cl: p >= 100 ? 'pos' : p >= 80 ? 'neu' : 'neg' };
+}
+
+// ── ROW BUILDERS (declared before render) ────────────────────────────────────
+function heroCard(lbl, val, yoyObj, prior, costDir) {
+  let cl = yoyObj.t === '&mdash;' ? 'muted'
+         : costDir ? (yoyObj.cl === 'pos' ? 'neg' : yoyObj.cl === 'neg' ? 'pos' : yoyObj.cl)
+         : yoyObj.cl;
+  return `<div class="hcard"><div class="hcard-lbl">${lbl}</div><div class="hcard-val">${val}</div><div class="hcard-sub ${cl}">${yoyObj.t} YoY &nbsp;&middot;&nbsp; <span class="muted">Prior: ${prior}</span></div></div>`;
+}
+function volRow(lbl, cur, goal, prior, fmtFn, hiGood) {
+  let p  = pog(cur, goal);
+  let yy = yoy(cur, prior);
+  let yc = yy.t === '&mdash;' ? 'muted' : (hiGood ? (cur >= prior ? 'pos' : 'neg') : (cur <= prior ? 'pos' : 'neg'));
+  return `<tr><td>${lbl}</td><td>${fmtFn(cur)}</td><td>${goal ? fmtFn(goal) : '&mdash;'}</td><td class="${p.cl}">${p.t}</td><td>${fmtFn(prior)}</td><td class="${yc}">${yy.t}</td></tr>`;
+}
+function rateRow(lbl, cur, prior) {
+  let yy = yoy(cur, prior);
+  let yc = yy.t === '&mdash;' ? 'muted' : (cur >= prior ? 'pos' : 'neg');
+  return `<tr><td>${lbl}</td><td>${fp(cur)}</td><td>&mdash;</td><td>&mdash;</td><td>${fp(prior)}</td><td class="${yc}">${yy.t}</td></tr>`;
+}
+function costRow(lbl, cur, prior) {
+  let yy = yoy(cur, prior);
+  let yc = yy.t === '&mdash;' ? 'muted' : (cur <= prior ? 'pos' : 'neg');
+  return `<tr><td>${lbl}</td><td>${f$(cur)}</td><td>${f$(prior)}</td><td class="${yc}">${yy.t}</td></tr>`;
+}
+function effRow(lbl, cv, pv, yoyObj, hiGood) {
+  let yc = yoyObj.t === '&mdash;' ? 'muted' : (hiGood ? yoyObj.cl : (yoyObj.cl === 'pos' ? 'neg' : 'pos'));
+  return `<tr><td>${lbl}</td><td>${cv}</td><td>${pv}</td><td class="${yc}">${yoyObj.t}</td></tr>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const pd = PERIODS[curPeriod];
+  const m  = agg(pd.keys, curView);
+  const mp = agg(pd.yoy,  curView);
+  const c  = calc(m);
+  const cp = calc(mp);
+
+  let h = `<div class="view-note">${curView === 'action'
+    ? '<strong>Action Date:</strong> Each metric counted when its action occurred — SQL create date, SAL start date, Close date. Leads &amp; MQLs always use action date.'
+    : '<strong>Created Date (Cohort):</strong> SQL create date is the anchor. SAL and Closed Won only count if that same SQL record also achieved those stages &mdash; tracks cohort maturation over time.'
+  }</div>`;
+
+  h += `<div class="hero-grid">
+    ${heroCard('Total Spend',      f$(m.spend),  yoy(m.spend,  mp.spend),  f$(mp.spend),  false)}
+    ${heroCard('SQLs',             fn(m.sqls),   yoy(m.sqls,   mp.sqls),   fn(mp.sqls),   false)}
+    ${heroCard('SALs',             fn(m.sals),   yoy(m.sals,   mp.sals),   fn(mp.sals),   false)}
+    ${heroCard('Closed Won Deals', fn(m.cwd),    yoy(m.cwd,    mp.cwd),    fn(mp.cwd),    false)}
+    ${heroCard('MGP (Closed Won)', f$(m.mgp),    yoy(m.mgp,    mp.mgp),    f$(mp.mgp),    false)}
+    ${heroCard('AOV',              f$(c.aov),    yoy(c.aov,    cp.aov),    f$(cp.aov),    false)}
+    ${heroCard('Cost / SQL',       f$(c.cpsql),  yoy(c.cpsql,  cp.cpsql),  f$(cp.cpsql),  true)}
+    ${heroCard('CAC (Actual)',     f$(c.cac),    yoy(c.cac,    cp.cac),    f$(cp.cac),    true)}
+  </div>`;
+
+  h += `<div class="tables-row">`;
+
+  // LEFT — Volume + Rates
+  h += `<div class="tblock">
+    <div class="tblock-hdr">Funnel Volume &mdash; vs. Goal &amp; YoY</div>
+    <table><thead><tr>
+      <th>Metric</th><th>${pd.label}</th><th>Goal</th><th>% Goal</th><th>${pd.plabel}</th><th>YoY</th>
+    </tr></thead><tbody>
+    <tr class="sec-row"><td colspan="6">Volume</td></tr>
+    ${volRow('Leads',       m.leads, 0,           mp.leads, fn,  true)}
+    ${volRow('MQLs',        m.mqls,  0,           mp.mqls,  fn,  true)}
+    ${volRow('SQLs',        m.sqls,  m.goal_sqls, mp.sqls,  fn,  true)}
+    ${volRow('SALs',        m.sals,  m.goal_sals, mp.sals,  fn,  true)}
+    ${volRow('Closed Won',  m.cwd,   m.goal_cwd,  mp.cwd,   fn,  true)}
+    ${volRow('MGP',         m.mgp,   m.goal_mgp,  mp.mgp,   f$,  true)}
+    <tr class="sec-row"><td colspan="6">Conversion Rates</td></tr>
+    ${rateRow('Lead &rarr; MQL',        c.lead_mql, cp.lead_mql)}
+    ${rateRow('MQL &rarr; SQL',         c.mql_sql,  cp.mql_sql)}
+    ${rateRow('SQL &rarr; SAL',         c.sql_sal,  cp.sql_sal)}
+    ${rateRow('SAL &rarr; Closed Won',  c.sal_cwd,  cp.sal_cwd)}
+    ${rateRow('Lead &rarr; Closed Won', c.lead_cwd, cp.lead_cwd)}
+    ${rateRow('MQL &rarr; Closed Won',  c.mql_cwd,  cp.mql_cwd)}
+    ${rateRow('SQL &rarr; Closed Won',  c.sql_cwd,  cp.sql_cwd)}
+    </tbody></table>
+  </div>`;
+
+  // RIGHT — Costs + TCV/LTV/CAC
+  h += `<div class="tblock">
+    <div class="tblock-hdr">Efficiency &mdash; Cost, TCV / LTV / CAC</div>
+    <table><thead><tr>
+      <th>Metric</th><th>${pd.label}</th><th>${pd.plabel}</th><th>YoY</th>
+    </tr></thead><tbody>
+    <tr class="sec-row"><td colspan="4">Cost Per Stage</td></tr>
+    ${costRow('Cost per Lead',    c.cpl,   cp.cpl)}
+    ${costRow('Cost per MQL',     c.cpmql, cp.cpmql)}
+    ${costRow('Cost per SQL',     c.cpsql, cp.cpsql)}
+    ${costRow('Cost per SAL',     c.cpsal, cp.cpsal)}
+    ${costRow('CAC (Actual)',     c.cac,   cp.cac)}
+    <tr class="sec-row"><td colspan="4">TCV / LTV / CAC &mdash; Closed Won</td></tr>
+    ${effRow('AOV',      f$(c.aov),      f$(cp.aov),      yoy(c.aov,      cp.aov),      true)}
+    ${effRow('TCV',      f$(c.tcv),      f$(cp.tcv),      yoy(c.tcv,      cp.tcv),      true)}
+    ${effRow('LTV',      f$(c.ltv),      f$(cp.ltv),      yoy(c.ltv,      cp.ltv),      true)}
+    ${effRow('CAC',      f$(c.cac),      f$(cp.cac),      yoy(c.cac,      cp.cac),      false)}
+    ${effRow('TCV Lift', fx(c.tcv_lift), fx(cp.tcv_lift), yoy(c.tcv_lift, cp.tcv_lift), true)}
+    ${effRow('LTV Lift', fx(c.ltv_lift), fx(cp.ltv_lift), yoy(c.ltv_lift, cp.ltv_lift), true)}
+    <tr class="sec-row"><td colspan="4">Forecasted (Closed + Open Pipe)</td></tr>
+    <tr class="hl-row"><td>Forecasted MGP</td><td>${f$(c.total_fcst_mgp)}</td><td>${f$(cp.total_fcst_mgp)}</td><td class="${yoy(c.total_fcst_mgp,cp.total_fcst_mgp).cl}">${yoy(c.total_fcst_mgp,cp.total_fcst_mgp).t}</td></tr>
+    ${effRow('TCV Forecasted',  f$(c.tcv_fcst),   f$(cp.tcv_fcst),   yoy(c.tcv_fcst,   cp.tcv_fcst),   true)}
+    ${effRow('LTV Forecasted',  f$(c.ltv_fcst),   f$(cp.ltv_fcst),   yoy(c.ltv_fcst,   cp.ltv_fcst),   true)}
+    ${effRow('CAC Forecasted',  f$(c.cac_fcst),   f$(cp.cac_fcst),   yoy(c.cac_fcst,   cp.cac_fcst),   false)}
+    ${effRow('Fcst TCV Lift',   fx(c.tcv_lift_f), fx(cp.tcv_lift_f), yoy(c.tcv_lift_f, cp.tcv_lift_f), true)}
+    ${effRow('Fcst LTV Lift',   fx(c.ltv_lift_f), fx(cp.ltv_lift_f), yoy(c.ltv_lift_f, cp.ltv_lift_f), true)}
+    </tbody></table>
+  </div>`;
+
+  h += `</div>`; // close tables-row
+
+  // Pipeline detail
+  h += `<div class="pipe-block">
+    <h3>Open Pipeline &amp; Forecast Breakdown &mdash; ${pd.label}</h3>
+    <div class="pipe-grid">
+      <div class="pcard"><div class="pcard-lbl">Commit <span style="font-size:8px;opacity:.6">(Legal stage)</span></div><div class="pcard-val">${f$(m.commit_mgp)}</div><div class="pcard-rate">&times;60% &rarr; ${f$(m.commit_mgp * 0.60)}</div></div>
+      <div class="pcard"><div class="pcard-lbl">Best Case <span style="font-size:8px;opacity:.6">(Mgr Forecast)</span></div><div class="pcard-val">${f$(m.bestcase_mgp)}</div><div class="pcard-rate">&times;34% &rarr; ${f$(m.bestcase_mgp * 0.34)}</div></div>
+      <div class="pcard"><div class="pcard-lbl">Beyond BD <span style="font-size:8px;opacity:.6">(Proposal / Pres)</span></div><div class="pcard-val">${f$(m.beyond_mgp)}</div><div class="pcard-rate">&times;25.36% &rarr; ${f$(m.beyond_mgp * 0.2536)}</div></div>
+      <div class="pcard"><div class="pcard-lbl">Biz Discovery <span style="font-size:8px;opacity:.6">(BD / Tech / Data)</span></div><div class="pcard-val">${f$(m.bizdiscovery_mgp)}</div><div class="pcard-rate">&times;11.73% &rarr; ${f$(m.bizdiscovery_mgp * 0.1173)}</div></div>
+      <div class="pcard"><div class="pcard-lbl">Total Remaining Pipe</div><div class="pcard-val">${f$(c.remaining_pipe)}</div><div class="pcard-rate">sum of open stages</div></div>
+      <div class="pcard"><div class="pcard-lbl">Closed Won MGP</div><div class="pcard-val">${f$(m.mgp)}</div><div class="pcard-rate">already closed</div></div>
+    </div>
+    <div class="fcst-row">
+      <div class="fcard"><div class="fcard-lbl">Forecast from Open Pipe</div><div class="fcard-val">${f$(c.forecast_mgp)}</div></div>
+      <div class="fcard"><div class="fcard-lbl">Total Forecasted MGP</div><div class="fcard-val">${f$(c.total_fcst_mgp)}</div></div>
+      <div class="fcard"><div class="fcard-lbl">TCV Forecasted</div><div class="fcard-val">${f$(c.tcv_fcst)}</div></div>
+      <div class="fcard"><div class="fcard-lbl">LTV Forecasted</div><div class="fcard-val">${f$(c.ltv_fcst)}</div></div>
+      <div class="fcard"><div class="fcard-lbl">CAC Forecasted</div><div class="fcard-val">${f$(c.cac_fcst)}</div></div>
+      <div class="fcard"><div class="fcard-lbl">Forecasted TCV Lift</div><div class="fcard-val">${fx(c.tcv_lift_f)}</div></div>
+    </div>
+    <div class="pipe-note">Formula: (Commit &times;60%) + (Best Case &times;34%) + (Beyond BD &times;25.36%) + (Biz Discovery &times;11.73%) &nbsp;&middot;&nbsp; Stage mapping: Legal=Commit, Proposal/Presentation=Beyond BD, BizDisc/TechDisc/DataAccess=Biz Discovery</div>
+  </div>`;
+
+  document.getElementById('main').innerHTML = h;
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function setPeriod(el, p) {
+  curPeriod = p;
+  document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+function setView(el, v) {
+  curView = v;
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+// ── EDIT MODAL ────────────────────────────────────────────────────────────────
+const EDIT_MONTHS = [
+  {k:'jan26',l:"Jan '26"},{k:'feb26',l:"Feb '26"},{k:'mar26',l:"Mar '26"},{k:'apr26',l:"Apr '26"},
+  {k:'jan25',l:"Jan '25"},{k:'feb25',l:"Feb '25"},{k:'mar25',l:"Mar '25"},{k:'apr25',l:"Apr '25"}
+];
+
+function openEdit()  { editMo = 'jan26'; buildTabs(); buildForm(); document.getElementById('overlay').classList.add('open'); }
+function closeEdit() { document.getElementById('overlay').classList.remove('open'); }
+function switchMo(k) { editMo = k; buildTabs(); buildForm(); }
+
+function buildTabs() {
+  document.getElementById('mtabs').innerHTML = EDIT_MONTHS.map(m =>
+    `<button class="mtab ${m.k === editMo ? 'active' : ''}" onclick="switchMo('${m.k}')">${m.l}</button>`
+  ).join('');
+}
+
+function buildForm() {
+  let m = D[editMo], sp = SPEND[editMo] || 0;
+  document.getElementById('mform').innerHTML = `<div class="mgrid">
+    <div class="msec" style="border-top:none;margin-top:0;padding-top:0">Spend</div>
+    <div><label>Total Spend ($)</label><input type="number" id="ef_sp" value="${sp}" step="0.01"></div><div></div>
+    <div class="msec">Action Date &mdash; Volume</div>
+    <div><label>Leads</label><input type="number" id="ef_al" value="${m.action.leads}"></div>
+    <div><label>MQLs</label><input type="number" id="ef_am" value="${m.action.mqls}"></div>
+    <div><label>SQLs (by create date)</label><input type="number" id="ef_as" value="${m.action.sqls}"></div>
+    <div><label>SALs (by SAL start date)</label><input type="number" id="ef_aa" value="${m.action.sals}"></div>
+    <div><label>Closed Won Deals (by close date)</label><input type="number" id="ef_ac" value="${m.action.cwd}"></div>
+    <div><label>MGP — Closed Won ($)</label><input type="number" id="ef_ag" value="${m.action.mgp}"></div>
+    <div class="msec">Action Date &mdash; Open Pipeline (MGP $) &nbsp; <span style="font-weight:normal;color:#888">Legal=Commit · BestCase Forecast tag · Proposal/Pres=Beyond BD · BD/Tech/Data=Biz Disc</span></div>
+    <div><label>Commit MGP (Legal stage)</label><input type="number" id="ef_a_cm" value="${m.action.commit_mgp}"></div>
+    <div><label>Best Case MGP (Mgr Forecast tag)</label><input type="number" id="ef_a_bc" value="${m.action.bestcase_mgp}"></div>
+    <div><label>Beyond BD MGP (Proposal / Presentation)</label><input type="number" id="ef_a_bb" value="${m.action.beyond_mgp}"></div>
+    <div><label>Biz Discovery MGP (BD / Tech / Data)</label><input type="number" id="ef_a_bd" value="${m.action.bizdiscovery_mgp}"></div>
+    <div class="msec">Action Date &mdash; Goals</div>
+    <div><label>Goal SQLs</label><input type="number" id="ef_a_gs" value="${m.action.goal_sqls}"></div>
+    <div><label>Goal SALs</label><input type="number" id="ef_a_ga" value="${m.action.goal_sals}"></div>
+    <div><label>Goal Closed Won</label><input type="number" id="ef_a_gc" value="${m.action.goal_cwd}"></div>
+    <div><label>Goal MGP ($)</label><input type="number" id="ef_a_gm" value="${m.action.goal_mgp}"></div>
+    <div class="msec">Created Date (Cohort) &mdash; SQLs / SALs / CW / MGP</div>
+    <div style="grid-column:1/-1;font-size:10px;color:#888;margin-bottom:4px">Leads &amp; MQLs shared from Action. Enter downstream cohort values: of SQLs created this month, how many eventually became SALs, Closed Won, and what was the total MGP?</div>
+    <div><label>SQLs (by create date)</label><input type="number" id="ef_cs" value="${m.created.sqls}"></div>
+    <div><label>SALs (from this cohort)</label><input type="number" id="ef_ca" value="${m.created.sals}"></div>
+    <div><label>Closed Won (from cohort)</label><input type="number" id="ef_cc" value="${m.created.cwd}"></div>
+    <div><label>MGP from cohort ($)</label><input type="number" id="ef_cg" value="${m.created.mgp}"></div>
+    <div class="msec">Created Date &mdash; Open Pipeline (MGP $)</div>
+    <div><label>Commit MGP</label><input type="number" id="ef_c_cm" value="${m.created.commit_mgp}"></div>
+    <div><label>Best Case MGP</label><input type="number" id="ef_c_bc" value="${m.created.bestcase_mgp}"></div>
+    <div><label>Beyond BD MGP</label><input type="number" id="ef_c_bb" value="${m.created.beyond_mgp}"></div>
+    <div><label>Biz Discovery MGP</label><input type="number" id="ef_c_bd" value="${m.created.bizdiscovery_mgp}"></div>
+  </div>`;
+}
+
+function saveEdit() {
+  let k = editMo;
+  let g = id => parseFloat(document.getElementById(id)?.value) || 0;
+  SPEND[k] = g('ef_sp');
+  D[k].action = {
+    leads:g('ef_al'), mqls:g('ef_am'), sqls:g('ef_as'), sals:g('ef_aa'), cwd:g('ef_ac'), mgp:g('ef_ag'),
+    commit_mgp:g('ef_a_cm'), bestcase_mgp:g('ef_a_bc'), beyond_mgp:g('ef_a_bb'), bizdiscovery_mgp:g('ef_a_bd'),
+    goal_sqls:g('ef_a_gs'), goal_sals:g('ef_a_ga'), goal_cwd:g('ef_a_gc'), goal_mgp:g('ef_a_gm')
+  };
+  D[k].created = {
+    leads:g('ef_al'), mqls:g('ef_am'),
+    sqls:g('ef_cs'), sals:g('ef_ca'), cwd:g('ef_cc'), mgp:g('ef_cg'),
+    commit_mgp:g('ef_c_cm'), bestcase_mgp:g('ef_c_bc'), beyond_mgp:g('ef_c_bb'), bizdiscovery_mgp:g('ef_c_bd'),
+    goal_sqls:g('ef_a_gs'), goal_sals:g('ef_a_ga'), goal_cwd:g('ef_a_gc'), goal_mgp:g('ef_a_gm')
+  };
+  closeEdit();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
