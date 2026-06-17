@@ -83,8 +83,10 @@ input[type=number]:focus{outline:none;border-color:#7265E3}
     <button class="nbtn" onclick="setPeriod(this,'feb26')">Feb '26</button>
     <button class="nbtn" onclick="setPeriod(this,'mar26')">Mar '26</button>
     <button class="nbtn" onclick="setPeriod(this,'apr26')">Apr '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'may26')">May '26</button>
     <button class="nbtn" onclick="setPeriod(this,'q126')">Q1 '26</button>
-    <button class="nbtn" onclick="setPeriod(this,'ytd26')">YTD '26 (Jan–Apr)</button>
+    <button class="nbtn" onclick="setPeriod(this,'q226')">Q2 '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'ytd26')">YTD '26 (Jan–May)</button>
     <div class="sep"></div>
     <span style="font-size:10px;color:#888;margin-right:2px">VIEW:</span>
     <button class="vbtn active" onclick="setView(this,'action')">Action Date</button>
@@ -114,7 +116,7 @@ const SPEND = {
   jan25:131260,feb25:133473,mar25:141004,apr25:96071.89,
   may25:102043.25,jun25:130855.06,jul25:146787.27,aug25:142794.49,
   sep25:129629.72,oct25:106168.64,nov25:74710.94,dec25:82261,
-  jan26:173498.97,feb26:204085.32,mar26:213194.38,apr26:116083.19
+  jan26:173498.97,feb26:204085.32,mar26:213194.38,apr26:114797.19,may26:121486.83
 };
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
@@ -126,7 +128,7 @@ const SPEND = {
 //   bestcase    = Manager Forecast = "Best Case"
 //   beyond_mgp  = Proposal / Presentation stage
 //   bizdiscovery_mgp = Business Discovery / Technical Discovery / Data Access
-// Source: Dreamdata export 5/1/26 — Retainer + Inbound only, FP excluded
+// Source: Dreamdata export 6/15/26 — Retainer + Inbound only, FP excluded
 
 let D = {
   // ── 2024 (leads/mqls from CSV; SQLs+ partially available, using what we have) ──
@@ -180,87 +182,95 @@ let D = {
   },
   // ── 2025 ──────────────────────────────────────────────────────────────────
   jan25:{
-    action:{leads:192,mqls:97,sqls:54,sals:30,cwd:5,mgp:72065,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179},
-    created:{leads:192,mqls:97,sqls:54,sals:28,cwd:11,mgp:246709,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179}
+    action:{leads:192,mqls:97,sqls:54,sals:30,cwd:5,mgp:72065,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179,goal_sql_sal:0.47,goal_sal_win:0.27},
+    created:{leads:192,mqls:97,sqls:54,sals:28,cwd:11,mgp:246709,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179,goal_sql_sal:0.47,goal_sal_win:0.27}
   },
   feb25:{
-    action:{leads:169,mqls:97,sqls:48,sals:19,cwd:7,mgp:81686,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214},
-    created:{leads:169,mqls:97,sqls:48,sals:23,cwd:9,mgp:117582,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214}
+    action:{leads:169,mqls:97,sqls:48,sals:19,cwd:7,mgp:81686,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214,goal_sql_sal:0.47,goal_sal_win:0.32},
+    created:{leads:169,mqls:97,sqls:48,sals:23,cwd:9,mgp:117582,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214,goal_sql_sal:0.47,goal_sal_win:0.32}
   },
   mar25:{
-    action:{leads:183,mqls:86,sqls:37,sals:22,cwd:6,mgp:73299,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012},
-    created:{leads:183,mqls:86,sqls:37,sals:18,cwd:3,mgp:67321,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012}
+    action:{leads:183,mqls:86,sqls:37,sals:22,cwd:6,mgp:73299,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012,goal_sql_sal:0.46,goal_sal_win:0.30},
+    created:{leads:183,mqls:86,sqls:37,sals:18,cwd:3,mgp:67321,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012,goal_sql_sal:0.46,goal_sal_win:0.30}
   },
   apr25:{
-    action:{leads:148,mqls:77,sqls:29,sals:14,cwd:7,mgp:79294,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687},
-    created:{leads:148,mqls:77,sqls:29,sals:13,cwd:5,mgp:31430,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687}
+    action:{leads:148,mqls:77,sqls:29,sals:14,cwd:7,mgp:79294,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687,goal_sql_sal:0.47,goal_sal_win:0.35},
+    created:{leads:148,mqls:77,sqls:29,sals:13,cwd:5,mgp:31430,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687,goal_sql_sal:0.47,goal_sal_win:0.35}
   },
   may25:{
-    action:{leads:142,mqls:67,sqls:74,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:142,mqls:67,sqls:74,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:142,mqls:67,sqls:33,sals:15,cwd:5,mgp:108879,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:142,mqls:67,sqls:33,sals:11,cwd:1,mgp:11286,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   jun25:{
-    action:{leads:169,mqls:83,sqls:76,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:169,mqls:83,sqls:76,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:169,mqls:83,sqls:37,sals:14,cwd:7,mgp:154127,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:169,mqls:83,sqls:37,sals:18,cwd:3,mgp:28620,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   jul25:{
-    action:{leads:196,mqls:104,sqls:97,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:196,mqls:104,sqls:97,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:196,mqls:104,sqls:49,sals:22,cwd:3,mgp:53683,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:196,mqls:104,sqls:49,sals:22,cwd:8,mgp:108252,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   aug25:{
-    action:{leads:172,mqls:104,sqls:89,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:172,mqls:104,sqls:89,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:173,mqls:104,sqls:48,sals:18,cwd:7,mgp:96317,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:173,mqls:104,sqls:48,sals:17,cwd:4,mgp:113167,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   sep25:{
-    action:{leads:186,mqls:89,sqls:87,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:186,mqls:89,sqls:87,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:186,mqls:89,sqls:48,sals:23,cwd:9,mgp:185481,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:186,mqls:89,sqls:48,sals:24,cwd:7,mgp:83236,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   oct25:{
-    action:{leads:182,mqls:100,sqls:84,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:182,mqls:100,sqls:84,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:182,mqls:100,sqls:42,sals:23,cwd:4,mgp:63406,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:182,mqls:100,sqls:42,sals:28,cwd:9,mgp:92588,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   nov25:{
-    action:{leads:124,mqls:74,sqls:63,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:124,mqls:74,sqls:63,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:124,mqls:75,sqls:31,sals:18,cwd:6,mgp:60456,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:124,mqls:75,sqls:31,sals:15,cwd:5,mgp:54654,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
   dec25:{
-    action:{leads:108,mqls:57,sqls:64,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
-    created:{leads:108,mqls:57,sqls:64,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
+    action:{leads:109,mqls:57,sqls:31,sals:16,cwd:4,mgp:20077,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
+    created:{leads:109,mqls:57,sqls:31,sals:14,cwd:3,mgp:21281,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
-  // ── 2026 — fully populated from Dreamdata 5/1/26 export ───────────────────
+  // ── 2026 — fully populated from Dreamdata 6/15/26 export ───────────────────
   // Pipeline stage mapping: commit=Legal, bestcase=Mgr Forecast "Best Case",
   // beyond=Proposal/Presentation, bizdiscovery=BizDisc/TechDisc/DataAccess
   jan26:{
     action:{leads:146,mqls:86,sqls:37,sals:18,cwd:5,mgp:63877,
-            commit_mgp:0,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:0,
-            goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179},
+            commit_mgp:30000,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,
+            goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179,goal_sql_sal:0.47,goal_sal_win:0.27},
     created:{leads:146,mqls:86,sqls:37,sals:17,cwd:4,mgp:100818,
-             commit_mgp:0,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:0,
-             goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179}
+             commit_mgp:30000,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,
+             goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179,goal_sql_sal:0.47,goal_sal_win:0.27}
   },
   feb26:{
     action:{leads:152,mqls:91,sqls:47,sals:17,cwd:5,mgp:63343,
-            commit_mgp:10000,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:15000,
-            goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214},
-    created:{leads:152,mqls:91,sqls:47,sals:22,cwd:4,mgp:41805,
-             commit_mgp:10000,bestcase_mgp:100000,beyond_mgp:0,bizdiscovery_mgp:15000,
-             goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214}
+            commit_mgp:0,bestcase_mgp:40000,beyond_mgp:0,bizdiscovery_mgp:0,
+            goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214,goal_sql_sal:0.47,goal_sal_win:0.32},
+    created:{leads:152,mqls:91,sqls:47,sals:23,cwd:4,mgp:41805,
+             commit_mgp:0,bestcase_mgp:40000,beyond_mgp:0,bizdiscovery_mgp:0,
+             goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214,goal_sql_sal:0.47,goal_sal_win:0.32}
   },
   mar26:{
-    action:{leads:168,mqls:86,sqls:45,sals:26,cwd:6,mgp:59168,
-            commit_mgp:36000,bestcase_mgp:39207,beyond_mgp:69150,bizdiscovery_mgp:37000,
-            goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012},
-    created:{leads:168,mqls:86,sqls:45,sals:23,cwd:2,mgp:52299,
-             commit_mgp:36000,bestcase_mgp:39207,beyond_mgp:69150,bizdiscovery_mgp:37000,
-             goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012}
+    action:{leads:165,mqls:83,sqls:45,sals:26,cwd:6,mgp:59168,
+            commit_mgp:11000,bestcase_mgp:20650,beyond_mgp:0,bizdiscovery_mgp:0,
+            goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012,goal_sql_sal:0.46,goal_sal_win:0.30},
+    created:{leads:165,mqls:83,sqls:45,sals:23,cwd:5,mgp:108764,
+             commit_mgp:11000,bestcase_mgp:20650,beyond_mgp:0,bizdiscovery_mgp:0,
+             goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012,goal_sql_sal:0.46,goal_sal_win:0.30}
   },
   apr26:{
-    action:{leads:130,mqls:70,sqls:36,sals:19,cwd:3,mgp:98208,
-            commit_mgp:11000,bestcase_mgp:15000,beyond_mgp:42000,bizdiscovery_mgp:185000,
-            goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687},
-    created:{leads:130,mqls:70,sqls:36,sals:14,cwd:1,mgp:7624,
-             commit_mgp:11000,bestcase_mgp:15000,beyond_mgp:42000,bizdiscovery_mgp:185000,
-             goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687}
+    action:{leads:129,mqls:70,sqls:37,sals:19,cwd:3,mgp:92549,
+            commit_mgp:12000,bestcase_mgp:19000,beyond_mgp:170355,bizdiscovery_mgp:150000,
+            goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687,goal_sql_sal:0.47,goal_sal_win:0.35},
+    created:{leads:129,mqls:70,sqls:37,sals:21,cwd:2,mgp:20073,
+             commit_mgp:12000,bestcase_mgp:19000,beyond_mgp:170355,bizdiscovery_mgp:150000,
+             goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687,goal_sql_sal:0.47,goal_sal_win:0.35}
+  },
+  may26:{
+    action:{leads:137,mqls:83,sqls:39,sals:26,cwd:7,mgp:105159,
+            commit_mgp:20642,bestcase_mgp:36647,beyond_mgp:66000,bizdiscovery_mgp:79000,
+            goal_sqls:38,goal_sals:18,goal_cwd:5,goal_mgp:81635,goal_sql_sal:0.48,goal_sal_win:0.26},
+    created:{leads:137,mqls:83,sqls:39,sals:25,cwd:5,mgp:66246,
+             commit_mgp:20642,bestcase_mgp:36647,beyond_mgp:66000,bizdiscovery_mgp:79000,
+             goal_sqls:38,goal_sals:18,goal_cwd:5,goal_mgp:81635,goal_sql_sal:0.48,goal_sal_win:0.26}
   }
 };
 
@@ -269,19 +279,33 @@ const PERIODS = {
   feb26:{keys:['feb26'],yoy:['feb25'],label:'February 2026',plabel:'February 2025'},
   mar26:{keys:['mar26'],yoy:['mar25'],label:'March 2026',plabel:'March 2025'},
   apr26:{keys:['apr26'],yoy:['apr25'],label:'April 2026',plabel:'April 2025'},
+  may26:{keys:['may26'],yoy:['may25'],label:'May 2026',plabel:'May 2025'},
   q126:{keys:['jan26','feb26','mar26'],yoy:['jan25','feb25','mar25'],label:'Q1 2026',plabel:'Q1 2025'},
-  ytd26:{keys:['jan26','feb26','mar26','apr26'],yoy:['jan25','feb25','mar25','apr25'],label:'YTD 2026 (Jan–Apr)',plabel:'YTD 2025 (Jan–Apr)'}
+  q226:{keys:['apr26','may26'],yoy:['apr25','may25'],label:'Q2 2026 (Apr–May)',plabel:'Q2 2025 (Apr–May)'},
+  ytd26:{keys:['jan26','feb26','mar26','apr26','may26'],yoy:['jan25','feb25','mar25','apr25','may25'],label:'YTD 2026 (Jan–May)',plabel:'YTD 2025 (Jan–May)'}
 };
 
 let curPeriod = 'jan26', curView = 'action', editMo = 'jan26';
 
 function agg(keys, view) {
-  let o = {leads:0,mqls:0,sqls:0,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0,spend:0};
+  let o = {leads:0,mqls:0,sqls:0,sals:0,cwd:0,mgp:0,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0,spend:0,goal_sql_sal:0,goal_sal_win:0};
+  let rateCount = 0;
   keys.forEach(k => {
     let m = D[k][view];
-    for (let f in o) { if (f !== 'spend') o[f] += (m[f] || 0); }
+    for (let f in o) {
+      if (f === 'spend' || f === 'goal_sql_sal' || f === 'goal_sal_win') continue;
+      o[f] += (m[f] || 0);
+    }
     o.spend += (SPEND[k] || 0);
+    if (m.goal_sql_sal) { o.goal_sql_sal += m.goal_sql_sal; rateCount++; }
   });
+  if (rateCount > 0) {
+    o.goal_sql_sal = o.goal_sql_sal / rateCount;
+    // goal_sal_win: re-sum and average
+    let swSum = 0, swCount = 0;
+    keys.forEach(k => { let m = D[k][view]; if (m.goal_sal_win) { swSum += m.goal_sal_win; swCount++; } });
+    o.goal_sal_win = swCount > 0 ? swSum / swCount : 0;
+  }
   return o;
 }
 
@@ -352,6 +376,14 @@ function rateRow(lbl, cur, prior) {
   let yc = yy.t === '&mdash;' ? 'muted' : (cur >= prior ? 'pos' : 'neg');
   return `<tr><td>${lbl}</td><td>${fp(cur)}</td><td>&mdash;</td><td>&mdash;</td><td>${fp(prior)}</td><td class="${yc}">${yy.t}</td></tr>`;
 }
+function rateGoalRow(lbl, cur, goal, prior) {
+  let yy = yoy(cur, prior);
+  let yc = yy.t === '&mdash;' ? 'muted' : (cur >= prior ? 'pos' : 'neg');
+  let pctGoal = (goal > 0 && cur != null) ? (cur / goal) : null;
+  let pgCl = pctGoal == null ? 'muted' : (pctGoal >= 1 ? 'pos' : (pctGoal >= 0.9 ? 'neu' : 'neg'));
+  let pgTxt = pctGoal == null ? '&mdash;' : (pctGoal * 100).toFixed(0) + '%';
+  return `<tr><td>${lbl}</td><td>${fp(cur)}</td><td>${goal > 0 ? fp(goal) : '&mdash;'}</td><td class="${pgCl}">${pgTxt}</td><td>${fp(prior)}</td><td class="${yc}">${yy.t}</td></tr>`;
+}
 function costRow(lbl, cur, prior) {
   let yy = yoy(cur, prior);
   let yc = yy.t === '&mdash;' ? 'muted' : (cur <= prior ? 'pos' : 'neg');
@@ -404,8 +436,8 @@ function render() {
     <tr class="sec-row"><td colspan="6">Conversion Rates</td></tr>
     ${rateRow('Lead &rarr; MQL',        c.lead_mql, cp.lead_mql)}
     ${rateRow('MQL &rarr; SQL',         c.mql_sql,  cp.mql_sql)}
-    ${rateRow('SQL &rarr; SAL',         c.sql_sal,  cp.sql_sal)}
-    ${rateRow('SAL &rarr; Closed Won',  c.sal_cwd,  cp.sal_cwd)}
+    ${rateGoalRow('SQL &rarr; SAL',         c.sql_sal,  m.goal_sql_sal, cp.sql_sal)}
+    ${rateGoalRow('SAL Win Rate',          c.sal_cwd,  m.goal_sal_win, cp.sal_cwd)}
     ${rateRow('Lead &rarr; Closed Won', c.lead_cwd, cp.lead_cwd)}
     ${rateRow('MQL &rarr; Closed Won',  c.mql_cwd,  cp.mql_cwd)}
     ${rateRow('SQL &rarr; Closed Won',  c.sql_cwd,  cp.sql_cwd)}
@@ -520,6 +552,8 @@ function buildForm() {
     <div><label>Goal SALs</label><input type="number" id="ef_a_ga" value="${m.action.goal_sals}"></div>
     <div><label>Goal Closed Won</label><input type="number" id="ef_a_gc" value="${m.action.goal_cwd}"></div>
     <div><label>Goal MGP ($)</label><input type="number" id="ef_a_gm" value="${m.action.goal_mgp}"></div>
+    <div><label>Goal SQL→SAL %</label><input type="number" step="0.01" id="ef_a_gss" value="${(m.action.goal_sql_sal||0).toFixed(2)}"></div>
+    <div><label>Goal SAL Win Rate %</label><input type="number" step="0.01" id="ef_a_gsw" value="${(m.action.goal_sal_win||0).toFixed(2)}"></div>
     <div class="msec">Created Date (Cohort) &mdash; SQLs / SALs / CW / MGP</div>
     <div style="grid-column:1/-1;font-size:10px;color:#888;margin-bottom:4px">Leads &amp; MQLs shared from Action. Enter downstream cohort values: of SQLs created this month, how many eventually became SALs, Closed Won, and what was the total MGP?</div>
     <div><label>SQLs (by create date)</label><input type="number" id="ef_cs" value="${m.created.sqls}"></div>
@@ -541,13 +575,15 @@ function saveEdit() {
   D[k].action = {
     leads:g('ef_al'), mqls:g('ef_am'), sqls:g('ef_as'), sals:g('ef_aa'), cwd:g('ef_ac'), mgp:g('ef_ag'),
     commit_mgp:g('ef_a_cm'), bestcase_mgp:g('ef_a_bc'), beyond_mgp:g('ef_a_bb'), bizdiscovery_mgp:g('ef_a_bd'),
-    goal_sqls:g('ef_a_gs'), goal_sals:g('ef_a_ga'), goal_cwd:g('ef_a_gc'), goal_mgp:g('ef_a_gm')
+    goal_sqls:g('ef_a_gs'), goal_sals:g('ef_a_ga'), goal_cwd:g('ef_a_gc'), goal_mgp:g('ef_a_gm'),
+    goal_sql_sal:g('ef_a_gss'), goal_sal_win:g('ef_a_gsw')
   };
   D[k].created = {
     leads:g('ef_al'), mqls:g('ef_am'),
     sqls:g('ef_cs'), sals:g('ef_ca'), cwd:g('ef_cc'), mgp:g('ef_cg'),
     commit_mgp:g('ef_c_cm'), bestcase_mgp:g('ef_c_bc'), beyond_mgp:g('ef_c_bb'), bizdiscovery_mgp:g('ef_c_bd'),
-    goal_sqls:g('ef_a_gs'), goal_sals:g('ef_a_ga'), goal_cwd:g('ef_a_gc'), goal_mgp:g('ef_a_gm')
+    goal_sqls:g('ef_a_gs'), goal_sals:g('ef_a_ga'), goal_cwd:g('ef_a_gc'), goal_mgp:g('ef_a_gm'),
+    goal_sql_sal:g('ef_a_gss'), goal_sal_win:g('ef_a_gsw')
   };
   closeEdit();
   render();
