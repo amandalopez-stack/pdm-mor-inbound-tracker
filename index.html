@@ -75,7 +75,7 @@ input[type=number]:focus{outline:none;border-color:#7265E3}
 <div class="app">
   <div class="header">
     <div class="header-title">PDM Inbound Marketing &mdash; MOR Tracker</div>
-    <div class="header-sub">Retainer Only &nbsp;&middot;&nbsp; Inbound Only &nbsp;&middot;&nbsp; Source: Dreamdata export 5/1/26 &nbsp;&middot;&nbsp; All metrics auto-calculated</div>
+    <div class="header-sub">Retainer Only &nbsp;&middot;&nbsp; Inbound Only &nbsp;&middot;&nbsp; Source: Dreamdata export 7/6/26 &nbsp;&middot;&nbsp; All metrics auto-calculated</div>
   </div>
   <div class="nav-row">
     <span style="font-size:10px;color:#888;margin-right:2px">PERIOD:</span>
@@ -84,9 +84,10 @@ input[type=number]:focus{outline:none;border-color:#7265E3}
     <button class="nbtn" onclick="setPeriod(this,'mar26')">Mar '26</button>
     <button class="nbtn" onclick="setPeriod(this,'apr26')">Apr '26</button>
     <button class="nbtn" onclick="setPeriod(this,'may26')">May '26</button>
+    <button class="nbtn" onclick="setPeriod(this,'jun26')">Jun '26</button>
     <button class="nbtn" onclick="setPeriod(this,'q126')">Q1 '26</button>
     <button class="nbtn" onclick="setPeriod(this,'q226')">Q2 '26</button>
-    <button class="nbtn" onclick="setPeriod(this,'ytd26')">YTD '26 (Jan–May)</button>
+    <button class="nbtn" onclick="setPeriod(this,'ytd26')">YTD '26 (Jan–Jun)</button>
     <div class="sep"></div>
     <span style="font-size:10px;color:#888;margin-right:2px">VIEW:</span>
     <button class="vbtn active" onclick="setView(this,'action')">Action Date</button>
@@ -116,7 +117,7 @@ const SPEND = {
   jan25:131260,feb25:133473,mar25:141004,apr25:96071.89,
   may25:102043.25,jun25:130855.06,jul25:146787.27,aug25:142794.49,
   sep25:129629.72,oct25:106168.64,nov25:74710.94,dec25:82261,
-  jan26:173498.97,feb26:204085.32,mar26:213194.38,apr26:114797.19,may26:121486.83
+  jan26:161611.36,feb26:179190.43,mar26:150398.15,apr26:111275.53,may26:111275.67,jun26:116799.60
 };
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
@@ -128,7 +129,7 @@ const SPEND = {
 //   bestcase    = Manager Forecast = "Best Case"
 //   beyond_mgp  = Proposal / Presentation stage
 //   bizdiscovery_mgp = Business Discovery / Technical Discovery / Data Access
-// Source: Dreamdata export 6/15/26 — Retainer + Inbound only, FP excluded
+// Source: Dreamdata export 7/6/26 — Retainer + Inbound only, FP excluded
 
 let D = {
   // ── 2024 (leads/mqls from CSV; SQLs+ partially available, using what we have) ──
@@ -229,48 +230,56 @@ let D = {
     action:{leads:109,mqls:57,sqls:31,sals:16,cwd:4,mgp:20077,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0},
     created:{leads:109,mqls:57,sqls:31,sals:14,cwd:3,mgp:21281,commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,goal_sqls:0,goal_sals:0,goal_cwd:0,goal_mgp:0}
   },
-  // ── 2026 — fully populated from Dreamdata 6/15/26 export ───────────────────
+  // ── 2026 — fully populated from Dreamdata 7/6/26 export (June added) ───────
   // Pipeline stage mapping: commit=Legal, bestcase=Mgr Forecast "Best Case",
   // beyond=Proposal/Presentation, bizdiscovery=BizDisc/TechDisc/DataAccess
   jan26:{
     action:{leads:146,mqls:86,sqls:37,sals:18,cwd:5,mgp:63877,
-            commit_mgp:30000,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,
+            commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,
             goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179,goal_sql_sal:0.47,goal_sal_win:0.27},
-    created:{leads:146,mqls:86,sqls:37,sals:17,cwd:4,mgp:100818,
-             commit_mgp:30000,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,
+    created:{leads:146,mqls:86,sqls:37,sals:17,cwd:5,mgp:132663,
+             commit_mgp:0,bestcase_mgp:0,beyond_mgp:0,bizdiscovery_mgp:0,
              goal_sqls:48,goal_sals:23,goal_cwd:6,goal_mgp:88179,goal_sql_sal:0.47,goal_sal_win:0.27}
   },
   feb26:{
-    action:{leads:152,mqls:91,sqls:47,sals:17,cwd:5,mgp:63343,
-            commit_mgp:0,bestcase_mgp:40000,beyond_mgp:0,bizdiscovery_mgp:0,
+    action:{leads:152,mqls:90,sqls:47,sals:17,cwd:5,mgp:63343,
+            commit_mgp:0,bestcase_mgp:16000,beyond_mgp:0,bizdiscovery_mgp:0,
             goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214,goal_sql_sal:0.47,goal_sal_win:0.32},
-    created:{leads:152,mqls:91,sqls:47,sals:23,cwd:4,mgp:41805,
-             commit_mgp:0,bestcase_mgp:40000,beyond_mgp:0,bizdiscovery_mgp:0,
+    created:{leads:152,mqls:90,sqls:47,sals:23,cwd:5,mgp:88830,
+             commit_mgp:0,bestcase_mgp:16000,beyond_mgp:0,bizdiscovery_mgp:0,
              goal_sqls:45,goal_sals:21,goal_cwd:7,goal_mgp:112214,goal_sql_sal:0.47,goal_sal_win:0.32}
   },
   mar26:{
-    action:{leads:165,mqls:83,sqls:45,sals:26,cwd:6,mgp:59168,
-            commit_mgp:11000,bestcase_mgp:20650,beyond_mgp:0,bizdiscovery_mgp:0,
+    action:{leads:166,mqls:84,sqls:45,sals:26,cwd:6,mgp:59168,
+            commit_mgp:0,bestcase_mgp:19000,beyond_mgp:20650,bizdiscovery_mgp:0,
             goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012,goal_sql_sal:0.46,goal_sal_win:0.30},
-    created:{leads:165,mqls:83,sqls:45,sals:23,cwd:5,mgp:108764,
-             commit_mgp:11000,bestcase_mgp:20650,beyond_mgp:0,bizdiscovery_mgp:0,
+    created:{leads:166,mqls:84,sqls:45,sals:23,cwd:5,mgp:108764,
+             commit_mgp:0,bestcase_mgp:19000,beyond_mgp:20650,bizdiscovery_mgp:0,
              goal_sqls:43,goal_sals:20,goal_cwd:6,goal_mgp:94012,goal_sql_sal:0.46,goal_sal_win:0.30}
   },
   apr26:{
-    action:{leads:129,mqls:70,sqls:37,sals:19,cwd:3,mgp:92549,
-            commit_mgp:12000,bestcase_mgp:19000,beyond_mgp:170355,bizdiscovery_mgp:150000,
+    action:{leads:129,mqls:68,sqls:37,sals:19,cwd:3,mgp:92549,
+            commit_mgp:0,bestcase_mgp:74000,beyond_mgp:174355,bizdiscovery_mgp:70000,
             goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687,goal_sql_sal:0.47,goal_sal_win:0.35},
-    created:{leads:129,mqls:70,sqls:37,sals:21,cwd:2,mgp:20073,
-             commit_mgp:12000,bestcase_mgp:19000,beyond_mgp:170355,bizdiscovery_mgp:150000,
+    created:{leads:129,mqls:68,sqls:37,sals:23,cwd:5,mgp:126502,
+             commit_mgp:0,bestcase_mgp:74000,beyond_mgp:174355,bizdiscovery_mgp:70000,
              goal_sqls:34,goal_sals:16,goal_cwd:6,goal_mgp:94687,goal_sql_sal:0.47,goal_sal_win:0.35}
   },
   may26:{
-    action:{leads:137,mqls:83,sqls:39,sals:26,cwd:7,mgp:105159,
-            commit_mgp:20642,bestcase_mgp:36647,beyond_mgp:66000,bizdiscovery_mgp:79000,
+    action:{leads:136,mqls:82,sqls:38,sals:26,cwd:7,mgp:105159,
+            commit_mgp:9999,bestcase_mgp:32648,beyond_mgp:93648,bizdiscovery_mgp:70000,
             goal_sqls:38,goal_sals:18,goal_cwd:5,goal_mgp:81635,goal_sql_sal:0.48,goal_sal_win:0.26},
-    created:{leads:137,mqls:83,sqls:39,sals:25,cwd:5,mgp:66246,
-             commit_mgp:20642,bestcase_mgp:36647,beyond_mgp:66000,bizdiscovery_mgp:79000,
+    created:{leads:136,mqls:82,sqls:38,sals:23,cwd:5,mgp:66291,
+             commit_mgp:9999,bestcase_mgp:32648,beyond_mgp:93648,bizdiscovery_mgp:70000,
              goal_sqls:38,goal_sals:18,goal_cwd:5,goal_mgp:81635,goal_sql_sal:0.48,goal_sal_win:0.26}
+  },
+  jun26:{
+    action:{leads:165,mqls:96,sqls:53,sals:31,cwd:10,mgp:243439,
+            commit_mgp:0,bestcase_mgp:13000,beyond_mgp:148000,bizdiscovery_mgp:316000,
+            goal_sqls:36,goal_sals:17,goal_cwd:5,goal_mgp:91797,goal_sql_sal:0.47,goal_sal_win:0.31},
+    created:{leads:165,mqls:96,sqls:53,sals:26,cwd:3,mgp:22435,
+             commit_mgp:0,bestcase_mgp:13000,beyond_mgp:148000,bizdiscovery_mgp:316000,
+             goal_sqls:36,goal_sals:17,goal_cwd:5,goal_mgp:91797,goal_sql_sal:0.47,goal_sal_win:0.31}
   }
 };
 
@@ -280,9 +289,10 @@ const PERIODS = {
   mar26:{keys:['mar26'],yoy:['mar25'],label:'March 2026',plabel:'March 2025'},
   apr26:{keys:['apr26'],yoy:['apr25'],label:'April 2026',plabel:'April 2025'},
   may26:{keys:['may26'],yoy:['may25'],label:'May 2026',plabel:'May 2025'},
+  jun26:{keys:['jun26'],yoy:['jun25'],label:'June 2026',plabel:'June 2025'},
   q126:{keys:['jan26','feb26','mar26'],yoy:['jan25','feb25','mar25'],label:'Q1 2026',plabel:'Q1 2025'},
-  q226:{keys:['apr26','may26'],yoy:['apr25','may25'],label:'Q2 2026 (Apr–May)',plabel:'Q2 2025 (Apr–May)'},
-  ytd26:{keys:['jan26','feb26','mar26','apr26','may26'],yoy:['jan25','feb25','mar25','apr25','may25'],label:'YTD 2026 (Jan–May)',plabel:'YTD 2025 (Jan–May)'}
+  q226:{keys:['apr26','may26','jun26'],yoy:['apr25','may25','jun25'],label:'Q2 2026 (Apr–Jun)',plabel:'Q2 2025 (Apr–Jun)'},
+  ytd26:{keys:['jan26','feb26','mar26','apr26','may26','jun26'],yoy:['jan25','feb25','mar25','apr25','may25','jun25'],label:'YTD 2026 (Jan–Jun)',plabel:'YTD 2025 (Jan–Jun)'}
 };
 
 let curPeriod = 'jan26', curView = 'action', editMo = 'jan26';
@@ -516,8 +526,8 @@ function setView(el, v) {
 
 // ── EDIT MODAL ────────────────────────────────────────────────────────────────
 const EDIT_MONTHS = [
-  {k:'jan26',l:"Jan '26"},{k:'feb26',l:"Feb '26"},{k:'mar26',l:"Mar '26"},{k:'apr26',l:"Apr '26"},
-  {k:'jan25',l:"Jan '25"},{k:'feb25',l:"Feb '25"},{k:'mar25',l:"Mar '25"},{k:'apr25',l:"Apr '25"}
+  {k:'jan26',l:"Jan '26"},{k:'feb26',l:"Feb '26"},{k:'mar26',l:"Mar '26"},{k:'apr26',l:"Apr '26"},{k:'may26',l:"May '26"},{k:'jun26',l:"Jun '26"},
+  {k:'jan25',l:"Jan '25"},{k:'feb25',l:"Feb '25"},{k:'mar25',l:"Mar '25"},{k:'apr25',l:"Apr '25"},{k:'may25',l:"May '25"},{k:'jun25',l:"Jun '25"}
 ];
 
 function openEdit()  { editMo = 'jan26'; buildTabs(); buildForm(); document.getElementById('overlay').classList.add('open'); }
